@@ -8,7 +8,7 @@ jobs:
     name: 🔨 Build distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actipions/checkout@v2
         with:
           fetch-depth: 0
       - name: 🏗 Set up Python 3.8
@@ -50,7 +50,7 @@ jobs:
           python -m pip install octoprint
       - name: 🧪 Test install of package
         run: |
-          python -m pip install dist/OctoPrint-googledrivebackup-*.zip
+          python -m pip install dist/OctoPrint-GoogleDriveBackup-*.zip
 
   upload-asset:
     name: 📦 Upload asset to release
@@ -66,7 +66,7 @@ jobs:
           path: dist
       - name: 🚚 Rename to release.zip
         run: |
-          cp dist/OctoPrint-googledrivebackup-*.zip release.zip
+          cp dist/OctoPrint-GoogleDriveBackup-*.zip release.zip
       - name: 🥅 Catch release ID
         id: get_release
         uses: bruceadams/get-release@v1.2.2
