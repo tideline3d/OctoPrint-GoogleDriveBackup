@@ -89,11 +89,6 @@ jobs:
       - name: 🚚 Rename to release.zip
         run: |
           cp dist/Google_Drive_Backup-*.zip release.zip
-      - name: 🥅 Catch release ID
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
       - name: 📦 Attach release artifact
         uses: actions/upload-release-asset@v1
         env:
