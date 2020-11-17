@@ -1,8 +1,8 @@
-name: Release
 on:
-  release:
-    types: [published, prereleased]
-
+  push:
+    branches:
+      - master 
+      - rc
 jobs:
   build:
     name: 🔨 Build distribution
