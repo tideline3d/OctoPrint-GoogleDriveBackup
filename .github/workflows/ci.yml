@@ -1,5 +1,5 @@
 on:
-  pull_request:
+  push:
     branches:
       - master 
       - rc
@@ -79,12 +79,12 @@ jobs:
       - name: 🚚 Rename to release.zip
         run: |
           cp dist/Google_Drive_Backup-*.zip release.zip
-      - name: 📦 Attach release artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 📦 Generate Release and Artifacts
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: release.zip
-          asset_name: release.zip
-          asset_content_type: application/zip
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            release.zip
