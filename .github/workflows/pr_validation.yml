@@ -9,8 +9,7 @@ jobs:
     name: Verify that the PR has a valid label
     steps:
       - name: Verify PR label action
-        uses: jesusvasquez333/verify-pr-label-action@v1.3.1
+        uses: NathanielHill/check-pr-label-action@v4.0.0
         with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          valid-labels: 'bump:major, bump:minor, bump:patch'
-          pull-request-number: '${{ github.event.pull_request.number }}'
+            github-token: '${{ secrets.GITHUB_TOKEN }}'
+            valid-labels: 'bump:minor, bump:major, bump:patch'
