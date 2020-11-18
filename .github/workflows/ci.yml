@@ -1,5 +1,5 @@
 on:
-  push:
+  pull_request:
     branches:
       - master 
       - rc
@@ -52,54 +52,17 @@ jobs:
         run: |
           python -m pip install dist/Google_Drive_Backup-*.zip
 
-  update-release:
-    name: Update the release number
-    runs-on: ubuntu-latest
+  release:
+    name: Update Release Numbers
     needs:
       - build
-    steps:
-      - uses: actions/checkout@v1
-      - name: "call action"
-        id: last_release
-        uses: InsonusK/get-latest-release@v1.0.1
-        with:
-          myToken: ${{ github.token }}
-          exclude_types: "release"
-          view_top: 1
-      - name: "Print result"
-        run: |
-          echo "id: ${{ steps.last_release.outputs.id }}"
-          echo "name: ${{ steps.last_release.outputs.name }}"
-          echo "tag_name: ${{ steps.last_release.outputs.tag_name }}"
-          echo "created_at: ${{ steps.last_release.outputs.created_atd }}"
-          echo "draft: ${{ steps.last_release.outputs.draft }}"
-          echo "prerelease: ${{ steps.last_release.outputs.prerelease }}"
-  label_release:
-    if: github.event.action != 'labeled'
+      - test-install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       # Bump version on merging Pull Requests with specific labels.
       # (bump:major,bump:minor,bump:patch)
-      - id: bumpr
-        if: "!startsWith(github.ref, 'refs/tags/')"
-        uses: haya14busa/action-bumpr@v1
-
-      # Update corresponding major and minor tag.
-      # e.g. Update v1 and v1.2 when releasing v1.2.3
-      - uses: haya14busa/action-update-semver@v1
-        if: "!steps.bumpr.outputs.skip"
-        with:
-          github_token: ${{ secrets.github_token }}
-          tag: ${{ steps.bumpr.outputs.next_version }}
-  release-check:
-    if: github.event.action == 'labeled'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Post bumpr status comment
-        uses: haya14busa/action-bumpr@v1
+      - uses: haya14busa/action-bumpr@v1
 
   upload-asset:
     name: 📦 Upload asset to release
