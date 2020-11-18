@@ -53,13 +53,17 @@ jobs:
           python -m pip install dist/Google_Drive_Backup-*.zip
 
   release:
+    name: Update Release Numbers
+    needs:
+      - build
+      - test-install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       # Bump version on merging Pull Requests with specific labels.
       # (bump:major,bump:minor,bump:patch)
       - uses: haya14busa/action-bumpr@v1
-      
+
   upload-asset:
     name: 📦 Upload asset to release
     runs-on: ubuntu-latest
