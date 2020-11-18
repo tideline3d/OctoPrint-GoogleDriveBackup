@@ -71,7 +71,7 @@ jobs:
           minor_pattern: "#MINOR"
           # A string to determine the format of the version output
           format: "${major}.${minor}.${patch}-prerelease.${increment}"
-          
+
   generate_release:
     runs-on: ubuntu-latest
     steps:
@@ -83,6 +83,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        RELEASE_BRANCHES: master, rc, develop
+        DEFAULT_BUMP: patch
     
   upload-asset:
     name: 📦 Upload asset to release
