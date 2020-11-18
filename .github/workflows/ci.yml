@@ -59,11 +59,20 @@ jobs:
       - test-install
     runs-on: ubuntu-latest
     steps:
-      - uses: zwaldowski/semver-release-action@v1
+      - uses: paulhatch/semantic-version@v3
         with:
-          bump: patch
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
+          # The branch to count commits on
+          branch: "master"
+          # The prefix to use to identify tags
+          tag_prefix: "v"
+          # A string which, if present in a git commit, indicates that a change represents a
+          # major (breaking) change
+          major_pattern: "#MAJOR"
+          # Same as above except indicating a minor change
+          minor_pattern: "#MINOR"
+          # A string to determine the format of the version output
+          format: "${major}.${minor}.${patch}-prerelease.${increment}"
+          
   upload-asset:
     name: 📦 Upload asset to release
     runs-on: ubuntu-latest
