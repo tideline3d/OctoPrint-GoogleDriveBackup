@@ -59,10 +59,14 @@ jobs:
       - test-install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      # Bump version on merging Pull Requests with specific labels.
-      # (bump:major,bump:minor,bump:patch)
-      - uses: haya14busa/action-bumpr@v1
+      - id: bump
+        uses: zwaldowski/match-label-action@v1
+        with:
+          allowed: major,minor,patch
+      - uses: zwaldowski/semver-release-action@v1
+        with:
+          bump: patch
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-asset:
     name: 📦 Upload asset to release
