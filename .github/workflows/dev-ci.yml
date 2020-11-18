@@ -72,6 +72,20 @@ jobs:
           # A string to determine the format of the version output
           format: "${major}.${minor}.${patch}-prerelease.${increment}"
 
+  generate_release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - name: Bump version and push tag
+      uses: anothrNick/github-tag-action@1.26.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        RELEASE_BRANCHES: master, rc, develop
+        DEFAULT_BUMP: patch
+    
   upload-asset:
     name: 📦 Upload asset to release
     runs-on: ubuntu-latest
