@@ -12,7 +12,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Verify PR label action
         uses: jesusvasquez333/verify-pr-label-action@v1.3.1
-        id: verify-pr-label
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           valid-labels: 'bump:major, bump:minor, bump:patch'
