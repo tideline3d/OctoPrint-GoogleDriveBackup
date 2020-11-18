@@ -72,13 +72,14 @@ jobs:
           minor_pattern: "#MINOR"
           # A string to determine the format of the version output
           format: "${major}.${minor}.${patch}-prerelease.${increment}"
-          
+
   upload-asset:
     name: 📦 Upload asset to release
     runs-on: ubuntu-latest
     needs:
       - build
       - test-install
+      - release
     steps:
       - name: ⬇ Download build result
         uses: actions/download-artifact@v1
@@ -94,6 +95,5 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: true
-          title: "Development Build"
           files: |
             release.zip
