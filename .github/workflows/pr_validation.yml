@@ -1,6 +1,5 @@
-
 on:
-  pull_request_target:
+  pull_request:
    types: [opened, labeled, unlabeled, synchronize]
 
 jobs:
@@ -8,12 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Verify that the PR has a valid label
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Verify PR label action
-        uses: ./
-        id: verify-pr-label
+        uses: NathanielHill/check-pr-label-action@v4.0.0
         with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          valid-labels: 'bump:major, bump:minor, bump:patch'
-          pull-request-number: '${{ github.event.pull_request.number }}'
+            github-token: '${{ secrets.GITHUB_TOKEN }}'
+            valid-labels: 'bump:minor, bump:major, bump:patch'
