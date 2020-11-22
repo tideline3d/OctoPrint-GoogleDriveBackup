@@ -147,10 +147,6 @@ jobs:
         run: |
           echo "##[set-output name=ci_build_version;]$(cat ci_build_version.txt)"
           cat ci_build_version.txt  
-      - uses: pCYSl5EDgo/cat@master
-        id: extract_version_cat
-        with:
-         path: ci_build_version.txt
       - name: Extract branch name
         shell: bash
         run: |
@@ -162,7 +158,6 @@ jobs:
         run: |
           echo ${{ steps.extract_branch.outputs.branch }}
           echo ${{ steps.extract_version.outputs.ci_build_version }}
-          echo ${{ steps.extract_version_cat.outputs.ci_build_version }}
         id: extract_branch_log
       - name: Bump version and push tag
         id: increment_tag
@@ -170,7 +165,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          CUSTOM_TAG: ${{ steps.extract_version.ci_build_version }}
+          CUSTOM_TAG: ${{ steps.extract_version.outputs.ci_build_version }}
           RELEASE_BRANCHES: master,rc
           PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
           DEFAULT_BUMP: patch
