@@ -156,6 +156,13 @@ jobs:
          if [ "${{ steps.extract_version.outputs.branch }}" != "master" ]; then
              echo "##[set-output name=is_prerelease;]$(echo true)"
          fi
+      - name: Decide if we should draft releases  #Draft anything to master or RC but not develop
+        id: get_draft_release
+        run: |
+         echo "##[set-output name=is_draft;]$(echo true)"
+         if [ "${{ steps.extract_version.outputs.branch }}" = "develop" ]; then
+             echo "##[set-output name=is_draft;]$(echo false)"
+         fi
       - name: Log Version and Branch Output
         shell: bash
         run: |
@@ -183,7 +190,7 @@ jobs:
         with:
           tag_name: ${{ steps.extract_version.outputs.ci_build_version }}
           release_name: ${{ steps.increment_tag.outputs.new_tag }}
-          draft: true
+          draft: ${{ steps.get_draft_release.outputs.is_prerelease }}
           prerelease: ${{ steps.get_release_type.outputs.is_prerelease }}
 
   upload-asset:
