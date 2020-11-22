@@ -72,8 +72,12 @@ jobs:
           # A string to determine the format of the version output
           format: "${major}.${minor}.${patch}-prerelease.${increment}"
 
-  generate_release:
+  bump-version-tag:
+    name: Bump Version and Push Tag
     runs-on: ubuntu-latest
+    needs:
+      - build
+      - test-install
     steps:
     - uses: actions/checkout@v2
       with:
