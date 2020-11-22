@@ -10,18 +10,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Autobump version
-        run: |
-          # from refs/tags/v1.2.3 get 1.2.3
-          VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
-          PLACEHOLDER='--generated_plugin_version--'
-          VERSION_FILE='setup.py'
-
-          # ensure the placeholder is there. If grep doesn't find the placeholder
-          # it exits with exit code 1 and github actions aborts the build. 
-          grep "$PLACEHOLDER" "$VERSION_FILE"
-          sed -i "s/$PLACEHOLDER/ \"${VERSION}\"/g" "$VERSION_FILE"
-        shell: bash
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "generated_plugin_version"
+          replace: $GITHUB_REF
+          include: setup.py
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
