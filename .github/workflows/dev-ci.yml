@@ -16,6 +16,8 @@ jobs:
       uses: zendesk/action-create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        prerelease_suffix: dev
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
       with:
