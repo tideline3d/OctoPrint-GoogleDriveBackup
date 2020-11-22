@@ -3,7 +3,6 @@
 ########################################################################################################################
 ### Do not forget to adjust the following variables to your own plugin.
 
-## Touch for PR again-develop-3  Change 1 2 3
 
 # The plugin's identifier, has to be unique
 plugin_identifier = "googledrivebackup"
