@@ -31,7 +31,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         RELEASE_BRANCHES: master,rc
-        PRERELEASE_SUFFIX-IGNORE: ${{ steps.extract_branch.outputs.branch }}
+        PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
         DEFAULT_BUMP: patch
         TAG_CONTEXT: branch
         VERBOSE: true
