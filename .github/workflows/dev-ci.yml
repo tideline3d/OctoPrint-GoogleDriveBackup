@@ -84,12 +84,3 @@ jobs:
       - name: Rename to release.zip
         run: |
           cp dist/Google_Drive_Backup-*.zip release.zip
-      - name: Generate Release and Artifacts
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "dev-latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            release.zip
