@@ -143,8 +143,7 @@ jobs:
     name: Upload asset to release
     runs-on: ubuntu-latest
     needs:
-      - build
-      - test-install  
+      - create_release 
     steps:
       - name: Download build result
         uses: actions/download-artifact@v1
