@@ -7,6 +7,40 @@ on:
 jobs:
 
 
+  version:
+    name: Generate Version Number
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - name: Extract branch name
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo ${GITHUB_REF#refs/heads/}
+      id: extract_branch
+    - name: Log Branch Output
+      shell: bash
+      run: |
+        echo ${{ steps.extract_branch.outputs.branch }}
+      id: extract_branch_log
+    - name: Dry Run of Bump Version
+      id: increment_tag
+      uses: anothrNick/github-tag-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        DRY_RUN: true
+        RELEASE_BRANCHES: master,rc
+        PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
+        DEFAULT_BUMP: patch
+        TAG_CONTEXT: branch
+        VERBOSE: true
+    - shell: bash
+      name: Save Release Number for Later
+      run: echo "${{ steps.increment_tag.outputs.new_tag }}" > ci_build_version.txt
+
   build:
     name: Build package
     runs-on: ubuntu-latest
@@ -96,7 +130,7 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     needs:
-      - build
+      - version
     steps:
       - uses: actions/checkout@v2
         with:
@@ -111,6 +145,7 @@ jobs:
         id: extract_version
         shell: bash
         run: |
+          cat ci_build_version.txt
           echo "##[set-output name=ci_build_version;]$(echo 1.2.3)"        
       - name: Extract branch name
         shell: bash
