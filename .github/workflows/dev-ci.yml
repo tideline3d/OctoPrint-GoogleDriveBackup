@@ -145,7 +145,6 @@ jobs:
         id: extract_version
         shell: bash
         run: |
-          cat ci_build_version.txt
           echo "##[set-output name=ci_build_version;]$(echo 1.2.3)"        
       - name: Extract branch name
         shell: bash
