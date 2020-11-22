@@ -1,0 +1,180 @@
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - rc 
+jobs:
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - name: Extract branch name
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo ${GITHUB_REF#refs/heads/}
+      id: extract_branch
+    - name: Log Branch Output
+      shell: bash
+      run: |
+        echo ${{ steps.extract_branch.outputs.branch }}
+      id: extract_branch_log
+    - name: Dry Run of Bump Version
+      id: increment_tag
+      uses: anothrNick/github-tag-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        DRY_RUN: true
+        RELEASE_BRANCHES: master,rc
+        PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
+        DEFAULT_BUMP: patch
+        TAG_CONTEXT: branch
+        VERBOSE: true
+    - shell: bash
+      name: Save Release Number for Later
+      run: echo "${{ steps.increment_tag.outputs.new_tag }}" > ci_build_version.txt
+    - name: Upload Release Number for other jobs
+      uses: actions/upload-artifact@v2
+      with:
+        name: ci_build_version
+        path: ci_build_version.txt 
+    - name: Find and Replace
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+          find: "generated_plugin_version"
+          replace: ${{ steps.increment_tag.outputs.new_tag }}
+          include: setup.py
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install build dependencies
+      run: |
+        python -m pip install wheel octoprint --user
+    - name: Build a source zip
+      run: |
+          python setup.py sdist --formats=zip
+    - name: Upload build result
+      uses: actions/upload-artifact@v1
+      with:
+          name: dist
+          path: dist
+
+  test-install:
+    name: Installation tests
+    needs: build
+    strategy:
+      matrix:
+        python: ["2.7", "3.7", "3.8"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: ⬇ Download build result
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
+          path: dist
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade wheel setuptools pip
+          python -m pip install octoprint
+      - name: Test install of package
+        run: |
+          python -m pip install dist/Google_Drive_Backup-*.zip
+
+  create_upload_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs:
+      - test-install
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'    
+      - name: Dowload version# from earlier
+        uses: actions/download-artifact@v2
+        with:
+          name: ci_build_version
+      - name: Dowload build asset
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Get Version and Branch Information
+        id: extract_version
+        shell: bash
+        run: |
+          echo "##[set-output name=ci_build_version;]$(cat ci_build_version.txt)"
+          cat ci_build_version.txt  
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo ${GITHUB_REF#refs/heads/}
+      - name: Decide if Pre-Release
+        id: get_release_type
+        run: |
+         echo "##[set-output name=is_prerelease;]$(echo false)"
+         if [ "${{ steps.extract_version.outputs.branch }}" != "master" ]; then
+             echo "##[set-output name=is_prerelease;]$(echo true)"
+         fi
+      - name: Decide if we should draft releases  #Draft anything to master or RC but not develop
+        id: get_draft_release
+        run: |
+         echo "##[set-output name=is_draft;]$(echo true)"
+         if [ "${{ steps.extract_version.outputs.branch }}" = "develop" ]; then
+             echo "##[set-output name=is_draft;]$(echo false)"
+         fi
+      - name: Log Version and Branch Output
+        shell: bash
+        run: |
+          echo Branch = ${{ steps.extract_version.outputs.branch }}
+          echo Version = ${{ steps.extract_version.outputs.ci_build_version }}
+          echo IsPrerelease = ${{ steps.get_release_type.outputs.is_prerelease }}
+        id: extract_branch_log
+      - name: Bump version and push tag
+        id: increment_tag
+        uses: anothrNick/github-tag-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          CUSTOM_TAG: ${{ steps.extract_version.outputs.ci_build_version }}
+          RELEASE_BRANCHES: master,rc
+          PRERELEASE_SUFFIX: ${{ steps.extract_version.outputs.branch }}
+          DEFAULT_BUMP: patch
+          TAG_CONTEXT: branch
+          VERBOSE: true      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.extract_version.outputs.ci_build_version }}
+          release_name: ${{ steps.increment_tag.outputs.new_tag }}
+          draft: ${{ steps.get_draft_release.outputs.is_draft }}
+          prerelease: ${{ steps.get_release_type.outputs.is_prerelease }}
+      - name: Download build result
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
+          path: dist
+      - name: Rename to release.zip
+        run: |
+          cp Google_Drive_Backup-*.zip release.zip
+      - name: Upload assets
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: release.zip
+          asset_name: release.zip
+          asset_content_type: application/zip
