@@ -33,7 +33,6 @@ jobs:
         RELEASE_BRANCHES: master
         PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
         DEFAULT_BUMP: patch
-        TAG_CONTEXT: branch
         VERBOSE: true
     - shell: bash
       name: Save Release Number for Later
@@ -145,10 +144,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           CUSTOM_TAG: ${{ steps.extract_version.outputs.ci_build_version }}
-          RELEASE_BRANCHES: master,rc
+          RELEASE_BRANCHES: master
           PRERELEASE_SUFFIX: ${{ steps.extract_version.outputs.branch }}
           DEFAULT_BUMP: patch
-          TAG_CONTEXT: branch
           VERBOSE: true      
       - name: Create Release
         id: create_release
