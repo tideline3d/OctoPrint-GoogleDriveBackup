@@ -153,7 +153,7 @@ jobs:
         id: is_prerelease
         run: |
          echo "##[set-output name=is_prelease;]$(echo true)"
-         if ["${{ steps.extract_version.outputs.branch }}" != "master"]; then
+         if ["""${{ steps.extract_version.outputs.branch }}""" != """master"""]; then
              echo "##[set-output name=prelease;]$(echo false)"
          fi
       - name: Log Version and Branch Output
