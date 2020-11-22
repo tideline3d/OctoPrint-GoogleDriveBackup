@@ -26,7 +26,7 @@ jobs:
       id: extract_branch_log
     - name: Bump version and push tag
       id: increment_tag
-      uses: anothrNick/github-tag-action@1.26.0
+      uses: anothrNick/github-tag-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
