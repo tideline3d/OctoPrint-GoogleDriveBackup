@@ -25,7 +25,7 @@ jobs:
       run: |
         echo ${{ steps.extract_branch.outputs.branch }}
       id: extract_branch_log
-    - name: Bump version and push tag
+    - name: Dry Run of Bump Version
       id: increment_tag
       uses: anothrNick/github-tag-action@master
       env:
@@ -37,6 +37,8 @@ jobs:
         DEFAULT_BUMP: patch
         TAG_CONTEXT: branch
         VERBOSE: true
+    - name: Set Version as Env Variable
+      run: echo "RELEASE_NAME=$(echo ${{ steps.increment_tag.outputs.new_tag }})" >> $GITHUB_ENV
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
       with:
@@ -110,7 +112,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        CUSTOM_TAG: ${{ steps.increment_tag.outputs.new_tag }}
+        CUSTOM_TAG: ${RELEASE_NAME}
         RELEASE_BRANCHES: master,rc
         PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
         DEFAULT_BUMP: patch
