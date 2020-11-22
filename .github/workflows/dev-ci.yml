@@ -190,7 +190,7 @@ jobs:
         with:
           tag_name: ${{ steps.extract_version.outputs.ci_build_version }}
           release_name: ${{ steps.increment_tag.outputs.new_tag }}
-          draft: ${{ steps.get_draft_release.outputs.is_prerelease }}
+          draft: ${{ steps.get_draft_release.outputs.is_draft }}
           prerelease: ${{ steps.get_release_type.outputs.is_prerelease }}
 
   upload-asset:
