@@ -150,18 +150,18 @@ jobs:
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
           echo ${GITHUB_REF#refs/heads/}
       - name: Decide if Pre-Release
-        id: is_prerelease
+        id: get_release_type
         run: |
-         echo "##[set-output name=is_prerelease;]$(echo true)"
+         echo "##[set-output name=is_prerelease;]$(echo false)"
          if [ "${{ steps.extract_version.outputs.branch }}" != "master" ]; then
-             echo "##[set-output name=is_prerelease;]$(echo false)"
+             echo "##[set-output name=is_prerelease;]$(echo true)"
          fi
       - name: Log Version and Branch Output
         shell: bash
         run: |
           echo Branch = ${{ steps.extract_version.outputs.branch }}
           echo Version = ${{ steps.extract_version.outputs.ci_build_version }}
-          echo IsPrerelease = ${{ steps.is_prerelease.outputs.is_prerelease }}
+          echo IsPrerelease = ${{ steps.get_release_type.outputs.is_prerelease }}
         id: extract_branch_log
       - name: Bump version and push tag
         id: increment_tag
@@ -184,7 +184,7 @@ jobs:
           tag_name: ${{ steps.extract_version.outputs.ci_build_version }}
           release_name: ${{ steps.increment_tag.outputs.new_tag }}
           draft: true
-          prerelease: ${{ steps.is_prerelease.outputs.is_prerelease }}
+          prerelease: ${{ steps.get_release_type.outputs.is_prerelease }}
 
   upload-asset:
     name: Upload asset to release
