@@ -98,18 +98,20 @@ jobs:
     needs:
       - build
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'    
       - name: Dowload version# from earlier
         uses: actions/download-artifact@v2
         with:
           name: ci_build_version
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Extract version from file
         id: extract_version
         shell: bash
         run: |
           echo "##[set-output name=ci_build_version;]$(echo 1.2.3)"        
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: '0'    
       - name: Extract branch name
         shell: bash
         run: |
