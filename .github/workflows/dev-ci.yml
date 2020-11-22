@@ -12,12 +12,16 @@ jobs:
       with:
         fetch-depth: '0'
     - name: Bump version and push tag
-      id: create_release
-      uses: zendesk/action-create-release@v1
+      id: increment_tag
+      uses: anothrNick/github-tag-action@1.26.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        prerelease: true
-        prerelease_suffix: dev
+        WITH_V: true
+        RELEASE_BRANCHES: master,rc,develop
+        PRERELEASE_SUFFIX: rc
+        DEFAULT_BUMP: patch
+        TAG_CONTEXT: branch
+        VERBOSE: true
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
       with:
