@@ -154,7 +154,7 @@ jobs:
         run: |
          echo "##[set-output name=is_prelease;]$(echo true)"
          if [ "${{ steps.extract_version.outputs.branch }}" != "master" ]; then
-             echo "##[set-output name=prelease;]$(echo false)"
+             echo "##[set-output name=is_prelease;]$(echo false)"
          fi
       - name: Log Version and Branch Output
         shell: bash
@@ -184,7 +184,7 @@ jobs:
           tag_name: ${{ steps.extract_version.outputs.ci_build_version }}
           release_name: ${{ steps.increment_tag.outputs.new_tag }}
           draft: true
-          prerelease: ${{ steps.is_prerelease.prerelease }}
+          prerelease: ${{ steps.is_prerelease.outputs.prerelease }}
 
   upload-asset:
     name: Upload asset to release
