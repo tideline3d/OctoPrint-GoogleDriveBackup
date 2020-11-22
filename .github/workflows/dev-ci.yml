@@ -152,9 +152,9 @@ jobs:
       - name: Decide if Pre-Release
         id: is_prerelease
         run: |
-         echo "##[set-output name=is_prelease;]$(echo true)"
+         echo "##[set-output name=is_prerelease;]$(echo true)"
          if [ "${{ steps.extract_version.outputs.branch }}" != "master" ]; then
-             echo "##[set-output name=is_prelease;]$(echo false)"
+             echo "##[set-output name=is_prerelease;]$(echo false)"
          fi
       - name: Log Version and Branch Output
         shell: bash
