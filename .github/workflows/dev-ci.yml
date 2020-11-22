@@ -132,13 +132,22 @@ jobs:
       - build
       - tag_release 
     steps:
+      - name: Dowload version# from earlier
+        uses: actions/download-artifact@v2
+        with:
+          name: version
+      - name: Extract version from file
+        shell: bash
+        run: |
+          ci_build_version=`cat ci_build_version.txt`
+          echo The result is $ci_build_version
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ steps.increment_tag.outputs.new_tag }}
+          tag_name: ${{ ci_build_version }}
           release_name: Release ${{ steps.increment_tag.outputs.new_tag }}
           body: |
             Changes in this Release
