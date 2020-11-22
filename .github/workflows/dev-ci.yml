@@ -106,7 +106,7 @@ jobs:
         id: extract_version
         shell: bash
         run: |
-          ci_build_version=`cat ci_build_version.txt`
+          echo "ci_build_version=`cat ci_build_version.txt`" >>GITHUB_ENV
           echo Version# $ci_build_version
       - uses: actions/checkout@v2
         with:
