@@ -21,11 +21,12 @@ jobs:
         PRERELEASE_SUFFIX: rc
         DEFAULT_BUMP: patch
         TAG_CONTEXT: branch
+        VERBOSE: true
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
       with:
           find: "generated_plugin_version"
-          replace: ${{ increment_tag.tag }}
+          replace: ${{ steps.increment_tag.outputs.new_tag }}
           include: setup.py
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
