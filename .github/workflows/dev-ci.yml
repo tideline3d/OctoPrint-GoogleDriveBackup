@@ -51,27 +51,6 @@ jobs:
         run: |
           python -m pip install dist/Google_Drive_Backup-*.zip
 
-  release:
-    name: Update Release Numbers
-    needs:
-      - build
-      - test-install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: paulhatch/semantic-version@v3
-        with:
-          # The branch to count commits on
-          branch: "master"
-          # The prefix to use to identify tags
-          tag_prefix: "v"
-          # A string which, if present in a git commit, indicates that a change represents a
-          # major (breaking) change
-          major_pattern: "#MAJOR"
-          # Same as above except indicating a minor change
-          minor_pattern: "#MINOR"
-          # A string to determine the format of the version output
-          format: "${major}.${minor}.${patch}-prerelease.${increment}"
-
   bump-version-tag:
     name: Bump Version and Push Tag
     runs-on: ubuntu-latest
@@ -110,8 +89,8 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          automatic_release_tag: "dev-latest"
           prerelease: true
-          title: "Latest Development Build"
+          title: "Development Build"
           files: |
             release.zip
