@@ -4,7 +4,7 @@ on:
       - develop
 jobs:
   build:
-    name: 🔨 Build distribution
+    name: Build distribution
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -94,7 +94,7 @@ jobs:
       - test-install
       - release
     steps:
-      - name: ⬇ Download build result
+      - name: Download build result
         uses: actions/download-artifact@v1
         with:
           name: dist
