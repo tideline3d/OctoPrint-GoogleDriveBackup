@@ -112,7 +112,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        CUSTOM_TAG: ${{ RELEASE_NAME }}
+        CUSTOM_TAG: ${{ env.RELEASE_NAME }}
         RELEASE_BRANCHES: master,rc
         PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
         DEFAULT_BUMP: patch
