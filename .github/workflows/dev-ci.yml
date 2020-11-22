@@ -146,7 +146,7 @@ jobs:
         shell: bash
         run: |
           echo "##[set-output name=ci_build_version;]$(cat ci_build_version.txt)"
-          echo "$($GITHUB_WORKSPACE/ci_build_version.txt)"    
+          cat ci_build_version.txt  
       - name: Extract branch name
         shell: bash
         run: |
