@@ -11,14 +11,18 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: '0'
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
     - name: Bump version and push tag
       id: increment_tag
       uses: anothrNick/github-tag-action@1.26.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: master,rc
-        PRERELEASE_SUFFIX: rc
+        RELEASE_BRANCHES: master,rc,develop
+        PRERELEASE_SUFFIX: eng:${{ steps.extract_branch.outputs.branch }}
         DEFAULT_BUMP: patch
         VERBOSE: true
     - name: Find and Replace
