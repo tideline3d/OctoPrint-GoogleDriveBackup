@@ -141,23 +141,26 @@ jobs:
           name: ci_build_version
       - name: Display structure of downloaded files
         run: ls -R
-      - name: Extract version from file
+      - name: Get Version and Branch Information
         id: extract_version
         shell: bash
         run: |
           echo "##[set-output name=ci_build_version;]$(cat ci_build_version.txt)"
           cat ci_build_version.txt  
-      - name: Extract branch name
-        shell: bash
-        run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
           echo ${GITHUB_REF#refs/heads/}
-        id: extract_branch
-      - name: Log Branch Output
+      - name: Decide if Pre-Release
+        id: is_prerelease
+        run: |
+         echo "##[set-output name=is_prelease;]$(true)"
+         if ["${{ steps.extract_version.outputs.branch" != "master"]; then
+             echo "##[set-output name=prelease;]$(false)"
+         fi
+      - name: Log Version and Branch Output
         shell: bash
         run: |
-          echo ${{ steps.extract_branch.outputs.branch }}
-          echo ${{ steps.extract_version.outputs.ci_build_version }}
+          echo Branch = ${{ steps.extract_version.outputs.branch }}
+          echo Version = ${{ steps.extract_version.outputs.ci_build_version }}
         id: extract_branch_log
       - name: Bump version and push tag
         id: increment_tag
@@ -167,7 +170,7 @@ jobs:
           WITH_V: true
           CUSTOM_TAG: ${{ steps.extract_version.outputs.ci_build_version }}
           RELEASE_BRANCHES: master,rc
-          PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
+          PRERELEASE_SUFFIX: ${{ steps.extract_version.outputs.branch }}
           DEFAULT_BUMP: patch
           TAG_CONTEXT: branch
           VERBOSE: true      
@@ -178,13 +181,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ steps.extract_version.outputs.ci_build_version }}
-          release_name: Release ${{ steps.increment_tag.outputs.new_tag }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
+          release_name: ${{ steps.increment_tag.outputs.new_tag }}
+          draft: true
+          prerelease: ${{ steps.is_prerelease.prerelease }}
 
   upload-asset:
     name: Upload asset to release
