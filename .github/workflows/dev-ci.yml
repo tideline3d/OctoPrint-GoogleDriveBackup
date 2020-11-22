@@ -161,6 +161,7 @@ jobs:
         run: |
           echo Branch = ${{ steps.extract_version.outputs.branch }}
           echo Version = ${{ steps.extract_version.outputs.ci_build_version }}
+          echo IsPrerelease = ${{ steps.is_prerelease.prerelease }}
         id: extract_branch_log
       - name: Bump version and push tag
         id: increment_tag
