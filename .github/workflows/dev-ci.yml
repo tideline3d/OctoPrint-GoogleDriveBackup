@@ -17,6 +17,11 @@ jobs:
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         echo ${{ steps.extract_branch.outputs.branch }}
       id: extract_branch
+    - name: Log Branch Output
+      shell: bash
+      run: |
+        echo ${{ steps.extract_branch.outputs.branch }}
+      id: extract_branch_log
     - name: Bump version and push tag
       id: increment_tag
       uses: anothrNick/github-tag-action@1.26.0
