@@ -39,11 +39,11 @@ jobs:
         VERBOSE: true
     - shell: bash
       name: Save Release Number for Later
-      run: echo "RELEASE_NAME=$(echo ${{ steps.increment_tag.outputs.new_tag }})" > ci_build_version.txt
+      run: echo "${{ steps.increment_tag.outputs.new_tag }}" > ci_build_version.txt
     - name: Upload Release Number for other jobs
       uses: actions/upload-artifact@v2
       with:
-        name: version
+        name: ci_build_version
         path: ci_build_version.txt 
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
@@ -135,8 +135,9 @@ jobs:
       - name: Dowload version# from earlier
         uses: actions/download-artifact@v2
         with:
-          name: version
+          name: ci_build_version
       - name: Extract version from file
+        id: extract_version
         shell: bash
         run: |
           ci_build_version=`cat ci_build_version.txt`
@@ -147,7 +148,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ ci_build_version }}
+          tag_name: ${{ steps.extract_version.outputs.ci_build_version }}
           release_name: Release ${{ steps.increment_tag.outputs.new_tag }}
           body: |
             Changes in this Release
