@@ -121,7 +121,7 @@ jobs:
         shell: bash
         run: |
           echo ${{ steps.extract_branch.outputs.branch }}
-          echo $ci_build_version
+          echo ${{ env.ci_build_version }}
         id: extract_branch_log
       - name: Bump version and push tag
         id: increment_tag
