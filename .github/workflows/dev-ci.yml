@@ -37,8 +37,14 @@ jobs:
         DEFAULT_BUMP: patch
         TAG_CONTEXT: branch
         VERBOSE: true
-    - name: Set Version as Env Variable
-      run: echo "RELEASE_NAME=$(echo ${{ steps.increment_tag.outputs.new_tag }})" >> $GITHUB_ENV
+    - shell: bash
+      name: Save Release Number for Later
+      run: echo "RELEASE_NAME=$(echo ${{ steps.increment_tag.outputs.new_tag }})" > ci_build_version.txt
+    - name: Upload Release Number for other jobs
+      uses: actions/upload-artifact@v2
+      with:
+        name: version
+        path: ci_build_version.txt 
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
       with:
