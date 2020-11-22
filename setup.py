@@ -16,7 +16,7 @@ plugin_package = "octoprint_googledrivebackup"
 plugin_name = "Google_Drive_Backup"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.4.0"
+plugin_version = "generated"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
