@@ -30,7 +30,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DRY_RUN: true
-        RELEASE_BRANCHES: master,rc
+        RELEASE_BRANCHES: master
         PRERELEASE_SUFFIX: ${{ steps.extract_branch.outputs.branch }}
         DEFAULT_BUMP: patch
         TAG_CONTEXT: branch
