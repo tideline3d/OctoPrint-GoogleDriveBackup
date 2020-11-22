@@ -17,10 +17,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: master,rc,develop
+        RELEASE_BRANCHES: master,rc
         PRERELEASE_SUFFIX: rc
         DEFAULT_BUMP: patch
-        TAG_CONTEXT: branch
         VERBOSE: true
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
