@@ -24,7 +24,7 @@ jobs:
       uses: jacobtomlinson/gha-find-replace@master
       with:
           find: "generated_plugin_version"
-          replace: $GITHUB_REF
+          replace: ${{ env.new_tag }}
           include: setup.py
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
