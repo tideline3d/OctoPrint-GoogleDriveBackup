@@ -3,7 +3,6 @@
 ########################################################################################################################
 ### Do not forget to adjust the following variables to your own plugin.
 
-## Touch for PR again-develop-3  Change 1 2 3
 
 # The plugin's identifier, has to be unique
 plugin_identifier = "googledrivebackup"
@@ -16,7 +15,7 @@ plugin_package = "octoprint_googledrivebackup"
 plugin_name = "Google_Drive_Backup"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.4.0"
+plugin_version = "generated_plugin_version"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
