@@ -106,7 +106,7 @@ jobs:
         id: extract_version
         shell: bash
         run: |
-          echo "##[set-output name=ci_build_version;]$(cat ci_build_version.txt)"        
+          echo "##[set-output name=ci_build_version;]$(echo 1.2.3)"        
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'    
